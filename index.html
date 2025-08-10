@@ -10,15 +10,9 @@
             text-align: center;
             font-family: 'Arial', sans-serif;
             color: white;
-            background: linear-gradient(270deg, #ff758c, #ff7eb3, #ff9a9e, #fecfef);
-            background-size: 800% 800%;
-            animation: gradientBG 10s ease infinite;
+            background: url('https://i.ibb.co/0QwMxBf/love-couple.jpg') no-repeat center center fixed;
+            background-size: cover;
             overflow: hidden;
-        }
-        @keyframes gradientBG {
-            0% {background-position: 0% 50%;}
-            50% {background-position: 100% 50%;}
-            100% {background-position: 0% 50%;}
         }
         h1 {
             margin-top: 50px;
@@ -36,6 +30,10 @@
             margin: auto;
             margin-top: 20px;
             line-height: 1.5;
+            text-shadow: 0 0 10px black;
+            background: rgba(0,0,0,0.4);
+            padding: 10px;
+            border-radius: 10px;
         }
         .heart {
             font-size: 80px;
@@ -78,6 +76,12 @@
             text-shadow: 0 0 10px yellow;
             display: none;
         }
+        .love-images img {
+            max-width: 150px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px white;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +95,13 @@
     </p>
 
     <div class="ta">T 💖 A</div>
+
+    <!-- Romantic Images -->
+    <div class="love-images">
+        <img src="https://i.ibb.co/x5txpWx/couple-hug.jpg" alt="Couple Hug">
+        <img src="https://i.ibb.co/7jQj3mM/couple-kiss.jpg" alt="Couple Kiss">
+        <img src="https://i.ibb.co/QrZVxW0/couple-love.jpg" alt="Couple Love">
+    </div>
 
     <!-- Button -->
     <button onclick="showLove()">💌 Click Me 💌</button>
