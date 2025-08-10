@@ -5,24 +5,33 @@
     <title>T 💖 A</title>
     <style>
         body {
-            background: linear-gradient(to right, #ff9a9e, #fecfef);
-            color: white;
+            margin: 0;
+            padding: 0;
             text-align: center;
             font-family: 'Arial', sans-serif;
-            padding: 30px;
+            color: white;
+            background: linear-gradient(270deg, #ff758c, #ff7eb3, #ff9a9e, #fecfef);
+            background-size: 800% 800%;
+            animation: gradientBG 10s ease infinite;
             overflow: hidden;
         }
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
         h1 {
-            font-size: 60px;
+            margin-top: 50px;
+            font-size: 50px;
+            text-shadow: 0 0 20px white;
             animation: glow 2s infinite alternate;
-            margin-top: 40px;
         }
         @keyframes glow {
             from { text-shadow: 0 0 10px white; }
             to { text-shadow: 0 0 20px red; }
         }
         p {
-            font-size: 22px;
+            font-size: 20px;
             max-width: 700px;
             margin: auto;
             margin-top: 20px;
@@ -38,21 +47,36 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
-        .floating-heart {
+        .floating {
             position: fixed;
-            color: rgba(255,255,255,0.7);
-            font-size: 30px;
-            animation: float 6s linear infinite;
+            font-size: 25px;
+            animation: float 8s linear infinite;
+            opacity: 0.8;
         }
         @keyframes float {
-            from { transform: translateY(100vh) rotate(0deg); }
-            to { transform: translateY(-10vh) rotate(360deg); }
+            from { transform: translateY(100vh); }
+            to { transform: translateY(-10vh); }
         }
-        .ta {
-            font-size: 40px;
+        button {
             margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 20px;
+            color: white;
+            background: red;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0px 0px 10px white;
+        }
+        button:hover {
+            background: darkred;
+        }
+        .love-message {
+            margin-top: 20px;
+            font-size: 30px;
             font-weight: bold;
-            text-shadow: 0 0 10px red;
+            text-shadow: 0 0 10px yellow;
+            display: none;
         }
     </style>
 </head>
@@ -61,32 +85,39 @@
     <h1>❤️ Aamna, My Forever Love ❤️</h1>
     <div class="heart">💖</div>
     <p>
-        From the moment I met you, my world became brighter.<br>
-        You are my happiness, my inspiration, and my dream come true.<br>
-        I love you more than words can say, Aamna. 💕
+        You are the most beautiful part of my life.<br>
+        Every heartbeat whispers your name, and every smile is because of you.<br>
+        I love you endlessly, Aamna. 💕
     </p>
 
     <div class="ta">T 💖 A</div>
+
+    <!-- Button -->
+    <button onclick="showLove()">💌 Click Me 💌</button>
+    <div id="loveMsg" class="love-message">I Love You Aamna ❤️💋💐💖😘</div>
 
     <!-- Background Music -->
     <audio autoplay loop>
         <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Floating Hearts Script -->
+    <!-- Floating Emojis Script -->
     <script>
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('floating-heart');
-            heart.innerHTML = '💗';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (4 + Math.random() * 3) + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => {
-                heart.remove();
-            }, 7000);
+        const emojis = ["💖", "❤️", "💋", "💐", "😘", "💕", "😍", "🌹", "💞"];
+        function createFloatingEmoji() {
+            const emoji = document.createElement('div');
+            emoji.classList.add('floating');
+            emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.animationDuration = (4 + Math.random() * 4) + 's';
+            document.body.appendChild(emoji);
+            setTimeout(() => emoji.remove(), 8000);
         }
-        setInterval(createHeart, 500);
+        setInterval(createFloatingEmoji, 400);
+
+        function showLove() {
+            document.getElementById('loveMsg').style.display = 'block';
+        }
     </script>
 
 </body>
