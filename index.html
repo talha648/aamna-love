@@ -3,80 +3,80 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ludo — T 💖 A Edition (with bots, sounds, save)</title>
+<title>T 💖 A — Romantic Ludo (bots, sounds, save)</title>
 <style>
-  :root{
-    --size:760px;
-    --cell:calc(var(--size)/15);
-    --panel-bg: rgba(255,255,255,0.06);
-  }
+  :root{ --size:760px; --grid:15; --cell: calc(var(--size)/var(--grid)); }
   html,body{height:100%;margin:0;font-family:Inter,Arial,system-ui;background:
-    linear-gradient(-45deg,#ff9a9e,#ffd1dc,#ffe6f0,#fceef3);background-size:400% 400%;
-    animation:grad 12s ease infinite;color:#061022}
+    linear-gradient(-45deg,#ffd1e6,#ffe6f7,#fff0f7,#ffebf2);background-size:400% 400%;
+    animation:grad 14s ease infinite;color:#061022}
   @keyframes grad{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
-  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;gap:20px}
-  .board-wrap{width:var(--size);height:var(--size);position:relative;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.25);overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;gap:18px;box-sizing:border-box}
+  .board-box{width:var(--size);height:var(--size);position:relative;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.18);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))}
   canvas#board{width:100%;height:100%;display:block}
   .tokens-layer{position:absolute;inset:6px;pointer-events:none}
-  .panel{width:360px;padding:16px;border-radius:12px;background:var(--panel-bg);box-shadow:0 12px 30px rgba(2,6,23,0.35)}
-  .panel h2{margin:0 0 10px}
+  .panel{width:380px;padding:14px;border-radius:12px;background:rgba(255,255,255,0.06);box-shadow:0 12px 30px rgba(2,6,23,0.15)}
+  h2{margin:0 0 10px}
+  .small{font-size:13px;color:#061022;opacity:.85}
   .row{display:flex;gap:8px;align-items:center}
-  .btn{padding:10px 12px;border-radius:8px;border:none;cursor:pointer;background:#2b2f45;color:white}
-  .primary{background:linear-gradient(180deg,#ff6b81,#ff3b57);box-shadow:0 6px 18px rgba(255,80,107,0.16)}
-  select,input[type="number"]{padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.08)}
-  .message{margin-top:10px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);min-height:44px}
-  .players{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-  .p-card{flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;gap:8px}
-  .dot{width:14px;height:14px;border-radius:50%}
-  .dot.red{background:#ff506b}.dot.blue{background:#2a84ff}.dot.green{background:#22b85a}.dot.yellow{background:#ff9b00}
+  .btn{padding:10px 12px;border-radius:8px;border:none;background:#2b2f45;color:white;cursor:pointer}
+  .primary{background:linear-gradient(180deg,#ff6b81,#ff3b57);box-shadow:0 6px 18px rgba(255,80,107,0.12)}
+  select,input[type="number"]{padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)}
+  .players-setup{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+  .player-setup{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+  label{display:flex;gap:8px;align-items:center}
+  .message{margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);min-height:46px}
   .controls{display:flex;gap:8px;margin-top:8px}
-  .small{font-size:13px;color:#061022;opacity:.8}
-  .floating-love{position:fixed;font-size:22px;pointer-events:none;z-index:60;text-shadow:0 6px 12px rgba(0,0,0,0.18)}
-  .winner-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:70;display:none}
-  .winner-box{background:white;padding:24px;border-radius:12px;color:#061022;text-align:center}
-  @media(max-width:980px){.wrap{flex-direction:column}.panel{width:100%;max-width:420px}}
+  .floating-love{position:fixed;font-size:22px;pointer-events:none;z-index:60;text-shadow:0 6px 12px rgba(0,0,0,0.12)}
+  .winner-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:120;display:none}
+  .winner-box{background:#fff;padding:22px;border-radius:12px;color:#061022;text-align:center;box-shadow:0 12px 40px rgba(2,6,23,0.2)}
+  @media(max-width:980px){ .wrap{flex-direction:column;align-items:stretch} .panel{width:100%;max-width:420px} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="board-wrap" id="boardWrap">
+  <div class="board-box" id="boardBox">
     <canvas id="board" width="760" height="760" aria-label="Ludo board"></canvas>
     <div class="tokens-layer" id="tokensLayer"></div>
   </div>
 
-  <div class="panel">
-    <h2>T 💖 A — Ludo (bots, sounds, save)</h2>
+  <div class="panel" id="controlPanel">
+    <h2>T 💖 A — Romantic Ludo</h2>
 
-    <div class="players" id="playersUI"></div>
-
-    <div class="row" style="margin-bottom:8px">
-      <div style="flex:1">
-        <div class="small">Bot difficulty</div>
-        <select id="botDifficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option></select>
-      </div>
-      <div>
-        <div class="small">Bots</div>
-        <input id="botCount" type="number" min="0" max="3" value="0" style="width:64px">
+    <!-- Pre-game setup -->
+    <div style="margin-bottom:8px">
+      <div class="small">Player setup (choose total players 2–4, then set each player as Human or Bot)</div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <label>Players:
+          <select id="playerCount">
+            <option value="2">2</option><option value="3">3</option><option value="4" selected>4</option>
+          </select>
+        </label>
+        <button id="applySetup" class="btn">Apply</button>
       </div>
     </div>
 
-    <div class="controls">
+    <div class="players-setup" id="playersSetup"></div>
+
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <button id="startBtn" class="btn primary">Start Game</button>
+      <button id="resumeBtn" class="btn">Resume Saved</button>
+    </div>
+
+    <div class="controls" style="margin-top:10px">
       <button id="rollBtn" class="btn primary">Roll</button>
       <button id="resetBtn" class="btn">Reset</button>
-      <button id="saveBtn" class="btn">Save</button>
     </div>
 
-    <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-      <label style="display:flex;gap:8px;align-items:center"><input id="soundToggle" type="checkbox" checked> Sound</label>
-      <label style="display:flex;gap:8px;align-items:center"><input id="autoSave" type="checkbox" checked> Auto-save</label>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <label><input id="soundToggle" type="checkbox" checked> Sound</label>
+      <label><input id="autosaveToggle" type="checkbox" checked> Auto-save</label>
       <button id="clearSave" class="btn" style="margin-left:auto;background:#ffdede;color:#061022">Clear Save</button>
     </div>
 
-    <div style="margin-top:10px" class="small">Dice: <span id="lastRoll">-</span></div>
-    <div class="message" id="message">Click Roll to start. You need a 6 to exit base.</div>
+    <div style="margin-top:10px"><div class="small">Last roll: <span id="lastRoll">-</span></div></div>
+    <div class="message" id="message">Set up players and press Start.</div>
 
-    <div style="margin-top:10px" class="small">Controls: Click a token to select it when prompted. Bots play automatically.</div>
-    <div style="margin-top:12px;display:flex;gap:8px">
+    <div style="display:flex;gap:8px;margin-top:10px">
       <button id="exportBtn" class="btn">Export Save</button>
       <button id="importBtn" class="btn">Import Save</button>
     </div>
@@ -86,116 +86,104 @@
 <div class="winner-overlay" id="winnerOverlay">
   <div class="winner-box">
     <h2 id="winnerText">Winner!</h2>
-    <div style="margin-top:12px"><button id="playAgain" class="btn primary">Play Again</button></div>
+    <div style="margin-top:12px">
+      <button id="playAgain" class="btn primary">Play Again</button>
+    </div>
   </div>
 </div>
 
 <script>
-/* ====== Ludo T💖A Edition (single-file) ======
-Features:
-- Realistic 52-step path mapped to 15x15 board
-- 2-4 players local, bots (easy/medium)
-- Dice animations + WebAudio synth for dice/capture/win
-- localStorage save/restore, export/import
-- Simple UI and token click selection
-------------------------------------------------
-State & data structures are saved/restored from localStorage key: 'tla_ludo_save'
-------------------------------------------------
+/* Romantic Ludo — single file
+ Features:
+ - Pre-game player setup (2-4 players) with per-player Human/Bot (Easy/Medium)
+ - Easy/Medium bots (random / heuristic)
+ - Dice animation + WebAudio synth sounds
+ - Autosave (localStorage) + Export/Import/Clear
+ - Floating hearts in background
+ - Canvas-drawn board (15x15) with 52-step path generated programmatically
 */
 
-const canvas = document.getElementById('board');
-const ctx = canvas.getContext('2d', {alpha:false});
+/* ---------- Config & DOM ---------- */
+const canvas = document.getElementById('board'), ctx = canvas.getContext('2d', { alpha: false });
 const W = canvas.width, H = canvas.height;
+const GRID = 15, CELL = W / GRID;
 const tokensLayer = document.getElementById('tokensLayer');
-const playersUI = document.getElementById('playersUI');
+const playersSetupDiv = document.getElementById('playersSetup');
+const playerCountSelect = document.getElementById('playerCount');
+const applySetupBtn = document.getElementById('applySetup');
+const startBtn = document.getElementById('startBtn');
+const resumeBtn = document.getElementById('resumeBtn');
 const rollBtn = document.getElementById('rollBtn');
 const resetBtn = document.getElementById('resetBtn');
-const saveBtn = document.getElementById('saveBtn');
-const clearSaveBtn = document.getElementById('clearSave');
-const soundToggle = document.getElementById('soundToggle');
-const autoSaveToggle = document.getElementById('autoSave');
-const botCountInput = document.getElementById('botCount');
-const botDifficultySelect = document.getElementById('botDifficulty');
+const lastRollSpan = document.getElementById('lastRoll');
 const messageEl = document.getElementById('message');
-const lastRollEl = document.getElementById('lastRoll');
+const soundToggle = document.getElementById('soundToggle');
+const autosaveToggle = document.getElementById('autosaveToggle');
+const clearSaveBtn = document.getElementById('clearSave');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
 const winnerOverlay = document.getElementById('winnerOverlay');
 const winnerText = document.getElementById('winnerText');
 const playAgainBtn = document.getElementById('playAgain');
-const exportBtn = document.getElementById('exportBtn');
-const importBtn = document.getElementById('importBtn');
 
-const STORAGE_KEY = 'tla_ludo_save_v1';
+const STORAGE_KEY = 'tla_ludo_save_v2';
+const LOVE_EMOJIS = ["💖","❤️","💋","💐","😘","💕","😍","🌹","💞","💗"];
 
-// board grid config
-const GRID = 15;
-const CELL = W / GRID;
-
-// colors
-const COLORS = { red:'#ff506b', blue:'#2a84ff', green:'#22b85a', yellow:'#ff9b00' };
+const COLORS = { red:'#ff6b81', blue:'#5ea9ff', green:'#60d985', yellow:'#ffb347' };
 const playersOrder = ['red','blue','green','yellow'];
 
-// standard Ludo mapping to 15x15 coordinates (row, col) for 52 steps
-// This mapping is constructed to reflect a classic Ludo board layout on 15x15.
-const PATH = [
-  [6,1],[6,2],[6,3],[6,4],[6,5],[5,6],[4,6],[3,6],[2,6],[1,6],[0,6],[0,7],
-  [0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
-  [7,14],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9],[8,8],[9,8],[10,8],[11,8],[12,8],
-  [13,8],[14,8],[14,7],[14,6],[13,6],[12,6],[11,6],[10,6],[9,6],[8,5],[8,4],[8,3],
-  [8,2],[8,1
-];
-// The PATH array should have 52 entries; if it doesn't due to copy issues, fallback generation will be used.
-if(PATH.length !== 52){
-  // fallback: generate outer rectangle loop (works for gameplay)
-  PATH.length = 0;
-  for(let c=1;c<=13 && PATH.length<52;c++) PATH.push([1,c]);
-  for(let r=1;r<=13 && PATH.length<52;r++) PATH.push([r,13]);
-  for(let c=13;c>=1 && PATH.length<52;c--) PATH.push([13,c]);
-  for(let r=13;r>=1 && PATH.length<52;r--) PATH.push([r,1]);
+/* ---------- PATH generation: 52-step loop around inner perimeter ---------- */
+function generatePath(){
+  const list = [];
+  // top row from col 1..13 (r=1)
+  for(let c=1; c<=13 && list.length<52; c++) list.push([1,c]);
+  // right col from r=1..13 col=13
+  for(let r=1; r<=13 && list.length<52; r++) list.push([r,13]);
+  // bottom row col=13..1 r=13
+  for(let c=13; c>=1 && list.length<52; c--) list.push([13,c]);
+  // left col r=13..1 col=1
+  for(let r=13; r>=1 && list.length<52; r--) list.push([r,1]);
+  return list;
 }
+const PATH = generatePath(); // length 52
+const PATHLEN = PATH.length; // should be 52
 
-// starting index (entry onto board) for each player (red starts at PATH index 0, blue 13, green 26, yellow 39)
+// starting entry indices for each player along PATH
 const playerStartIndex = { red:0, blue:13, green:26, yellow:39 };
+const safeIndices = new Set([playerStartIndex.red, playerStartIndex.blue, playerStartIndex.green, playerStartIndex.yellow]);
 
-// home column mapping: for each player, their home entry is the square at startIndex - 1 (mod 52)
-function homeEntryIndexForPlayerIdx(pi){
-  const name = playersOrder[pi];
-  const start = playerStartIndex[name];
-  return (start + 51) % PATH.length; // square before start
+/* ---------- Game state ---------- */
+let game = null; // we'll initialize with setup or saved state
+
+function freshGame(playerCount = 4, playerTypes = null, botDifficulty = null){
+  // playerTypes: array length playerCount with 'human'|'bot'
+  if(!playerTypes){
+    playerTypes = Array.from({length:playerCount}, (_,i)=> i===0 ? 'human' : 'bot'); // default 1 human (player 0), rest bots
+  }
+  if(!botDifficulty){
+    botDifficulty = Array.from({length:playerCount}, ()=> 'medium');
+  }
+  const tokens = [];
+  for(let p=0;p<4;p++) tokens[p] = [-1,-1,-1,-1]; // -1 base
+  const activePlayers = [];
+  for(let i=0;i<playerCount;i++) activePlayers.push(i);
+  return {
+    playerCount,
+    playerTypes, // ex: ['human','bot','bot','human']
+    botDifficulty,
+    tokens,
+    finished: [0,0,0,0],
+    activePlayers,
+    currentPlayerIndex: 0,
+    lastRoll: null,
+    message: 'Game ready. Click Roll (or let bots play).'
+  };
 }
 
-// safe squares set (commonly the 4 starting squares and corner entries)
-const safeIndices = new Set([
-  playerStartIndex.red,
-  playerStartIndex.blue,
-  playerStartIndex.green,
-  playerStartIndex.yellow,
-  (playerStartIndex.red+13)%52,
-  (playerStartIndex.blue+13)%52,
-  (playerStartIndex.green+13)%52,
-  (playerStartIndex.yellow+13)%52
-]);
-
-// game state
-let state = {
-  playerCount:4,
-  bots:0,
-  botDifficulty:'medium',
-  tokens: null, // tokens[p][t] = -1 (base) | 0..51 path | 100+player*6+step home (step 0..5)
-  finished: [0,0,0,0],
-  currentPlayerIndex: 0, // index into activePlayers array
-  activePlayers: [0,1,2,3],
-  lastRoll: null,
-  message: 'Click Roll to start. Need a 6 to exit base.'
-};
-
-// audio (WebAudio)
+/* ---------- Audio (WebAudio synth) ---------- */
 let audioCtx = null;
-function ensureAudio(){
-  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
-
-// tiny synthesizer helper
-function playTone(freq, duration=0.18, type='sine', gain=0.12){
+function ensureAudio(){ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function playTone(freq, dur=0.14, type='sine', gain=0.08){
   if(!soundToggle.checked) return;
   ensureAudio();
   const o = audioCtx.createOscillator();
@@ -204,262 +192,177 @@ function playTone(freq, duration=0.18, type='sine', gain=0.12){
   g.gain.setValueAtTime(gain, audioCtx.currentTime);
   o.connect(g); g.connect(audioCtx.destination);
   o.start();
-  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-  setTimeout(()=>{ o.stop(); }, duration*1000 + 30);
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+  setTimeout(()=>o.stop(), dur*1000 + 30);
 }
-function playDiceSound(){
-  // quick ascending blips
-  playTone(450,0.06,'sine',0.06);
-  setTimeout(()=>playTone(560,0.06,'sine',0.055),70);
-  setTimeout(()=>playTone(660,0.06,'sine',0.05),140);
-}
-function playCaptureSound(){
-  playTone(220,0.14,'sawtooth',0.12);
-  setTimeout(()=>playTone(120,0.12,'sine',0.09),120);
-}
-function playWinSound(){
-  playTone(880,0.18,'sine',0.12);
-  setTimeout(()=>playTone(660,0.18,'sine',0.12),220);
-  setTimeout(()=>playTone(980,0.28,'sine',0.14),420);
-}
+function playDiceSound(){ playTone(450,0.05); setTimeout(()=>playTone(560,0.05),60); setTimeout(()=>playTone(680,0.05),120); }
+function playCaptureSound(){ playTone(260,0.12,'sawtooth',0.12); setTimeout(()=>playTone(160,0.1),120); }
+function playWinSound(){ playTone(880,0.18); setTimeout(()=>playTone(660,0.18),200); setTimeout(()=>playTone(980,0.28),420); }
 
-// utilities for home indexing
-function toHomeIndex(pIdx, step){ return 100 + pIdx*6 + step; }
-function isHomeIndex(v){ return v >= 100; }
-function homeStepFromIndex(v){ return v - 100 - Math.floor((v-100)/6)*6; }
-
-// init or restore game
-function freshState(){
-  const tokens = [];
-  for(let p=0;p<4;p++) tokens[p] = [-1,-1,-1,-1];
-  return { playerCount:4, bots:0, botDifficulty:'medium', tokens, finished:[0,0,0,0], currentPlayerIndex:0, activePlayers:[0,1,2,3], lastRoll:null, message:'Click Roll to start. Need a 6 to exit base.' };
-}
-function loadState(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(raw){
-    try{
-      const s = JSON.parse(raw);
-      // basic validation
-      if(s && s.tokens) { state = s; updateUIFromState(); return true; }
-    }catch(e){}
-  }
-  state = freshState();
-  return false;
-}
-function saveState(){
-  if(!autoSaveToggle.checked) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-function clearSave(){
-  localStorage.removeItem(STORAGE_KEY);
-  state = freshState();
-  updateUIFromState();
-  render();
-  setMessage('Save cleared. New game ready.');
-}
+/* ---------- Utils ---------- */
+function gridToPixel(r,c){ return { x: c * CELL, y: r * CELL }; }
+function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); ctx.fill(); }
+function saveGame(auto=true){ if(auto && !autosaveToggle.checked) return; localStorage.setItem(STORAGE_KEY, JSON.stringify(game)); }
+function clearSaved(){ localStorage.removeItem(STORAGE_KEY); setMessage('Saved data cleared.'); }
 
 /* ---------- Drawing board ---------- */
 function drawBoard(){
-  // clear
-  ctx.fillStyle = '#fdf7fb'; // subtle base
+  // background
+  ctx.fillStyle = '#fff5fb';
   ctx.fillRect(0,0,W,H);
 
-  // draw grid background slightly
-  ctx.fillStyle = 'rgba(255,255,255,0.02)';
+  // faint outer
+  ctx.fillStyle = 'rgba(0,0,0,0.02)';
   ctx.fillRect(4,4,W-8,H-8);
 
-  // draw the four home squares (6x6 cells)
+  // draw 6x6 home blocks
   drawHomeBlock(0,0,'red');
   drawHomeBlock(0,9,'blue');
   drawHomeBlock(9,9,'yellow');
   drawHomeBlock(9,0,'green');
 
-  // draw path squares (use PATH mapping)
-  for(let i=0;i<PATH.length;i++){
+  // draw path cells (PATH)
+  for(let i=0;i<PATHLEN;i++){
     const [r,c] = PATH[i];
     const {x,y} = gridToPixel(r,c);
     ctx.fillStyle = safeIndices.has(i) ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.02)';
-    roundRect(ctx,x+2,y+2,CELL-4,CELL-4,6,true,false);
-    // small marker
-    ctx.fillStyle = 'rgba(0,0,0,0.12)';
-    ctx.font = `${Math.max(10, CELL/6)}px Arial`;
-    // (optional) show index for debug: comment out to remove indices
-    // ctx.fillText(i, x+6, y+14);
+    roundRect(ctx, x+2, y+2, CELL-4, CELL-4, 6);
+    // optional small dot in center
   }
 
-  // draw center home lanes (4 colored triangles plus central area)
+  // draw home lanes (6 cells each) by pre-defined coords
   drawHomeLane(0,'red');
   drawHomeLane(1,'blue');
   drawHomeLane(2,'yellow');
   drawHomeLane(3,'green');
 
-  // center circle / label
-  const centerRect = {x: gridToPixel(5,5).x + CELL*0, y: gridToPixel(5,5).y, w: CELL*4, h: CELL*4};
+  // center
+  const centerRect = gridToPixel(5,5);
   ctx.fillStyle = 'rgba(255,255,255,0.02)';
-  roundRect(ctx, centerRect.x, centerRect.y, centerRect.w, centerRect.h, 8, true, false)
+  roundRect(ctx, centerRect.x + 2, centerRect.y + 2, CELL*4 - 4, CELL*4 - 4, 8);
   ctx.fillStyle = '#061022';
-  ctx.font = '18px Verdana';
+  ctx.font = '18px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('T ❤️ A', centerRect.x + centerRect.w/2, centerRect.y + centerRect.h/2 - 4);
-  ctx.font = '12px Arial';
-  ctx.fillText('Playful Ludo — local multiplayer', centerRect.x + centerRect.w/2, centerRect.y + centerRect.h/2 + 16);
+  ctx.fillText('T ❤️ A', centerRect.x + CELL*2, centerRect.y + CELL*2 - 4);
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Playful Ludo — local multiplayer', centerRect.x + CELL*2, centerRect.y + CELL*2 + 14);
 }
 
-/* helpers for drawing */
 function drawHomeBlock(r0,c0,color){
   const {x,y} = gridToPixel(r0,c0);
-  ctx.fillStyle = colorBlockFill(color);
-  roundRect(ctx,x+2,y+2,CELL*6-4,CELL*6-4,10,true,false);
-  // small decoration: 4 circles where tokens will sit
-  const tokenGap = CELL*1.8;
-  const startX = x + CELL + 10;
-  const startY = y + CELL + 8;
-  for(let i=0;i<2;i++){
-    for(let j=0;j<2;j++){
-      const cx = startX + j*tokenGap;
-      const cy = startY + i*tokenGap;
-      ctx.beginPath(); ctx.fillStyle = '#fff'; ctx.globalAlpha = 0.06; ctx.arc(cx,cy,CELL*0.4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-    }
+  // colored area
+  ctx.fillStyle = colorFill(color);
+  roundRect(ctx, x+2, y+2, CELL*6 - 4, CELL*6 - 4, 10);
+  // token placeholders (soft)
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  const gap = CELL*1.6;
+  const startX = x + CELL*0.9;
+  const startY = y + CELL*0.9;
+  for(let i=0;i<2;i++) for(let j=0;j<2;j++){
+    const cx = startX + j*gap, cy = startY + i*gap;
+    ctx.beginPath(); ctx.arc(cx,cy,CELL*0.36,0,Math.PI*2); ctx.fill();
   }
 }
-function drawHomeLane(pIdx,color){
-  // home lanes: 6 cells from entry to center
-  const entryIndex = playerStartIndex[playersOrder[pIdx]];
-  // compute coordinates for the 6 home cells (pre-determined per player)
-  const laneCoords = homeLaneCoordsForPlayer(pIdx);
-  laneCoords.forEach((rc,i)=>{
+
+function drawHomeLane(playerIdx,colorName){
+  const lane = homeLaneCoordsForPlayer(playerIdx);
+  ctx.fillStyle = '#fff';
+  lane.forEach(rc=>{
     const {x,y} = gridToPixel(rc[0], rc[1]);
-    ctx.fillStyle = colorBlockFill(color);
-    roundRect(ctx, x+6, y+6, CELL-12, CELL-12, 6, true, false);
+    ctx.fillStyle = colorFill(colorName);
+    roundRect(ctx, x+6, y+6, CELL-12, CELL-12,6);
   });
 }
-function colorBlockFill(name){
-  if(name==='red') return 'linearGradient' // placeholder not used
-  return COLORS[name] || '#ccc';
-}
-function roundRect(ctx,x,y,w,h,r,fill,stroke){
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-  if(fill) ctx.fill();
-  if(stroke) ctx.stroke();
-}
-function gridToPixel(r,c){ return { x: c * CELL, y: r * CELL }; }
 
-// home lane coordinates (6 cells including final) for players in 15x15 layout
-function homeLaneCoordsForPlayer(pi){
-  // Each player has a sequence of 6 cells approaching center; coords chosen for classic layout
-  if(pi===0){ // red (top-left) go down-right towards center
-    return [[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]];
-  } else if(pi===1){ // blue (top-right) go left-down
-    return [[1,9],[2,9],[3,9],[4,9],[5,9],[6,9]];
-  } else if(pi===2){ // yellow (bottom-right) go up-left
-    return [[9,13],[9,12],[9,11],[9,10],[9,9],[9,8]];
-  } else { // green (bottom-left) go right-up
-    return [[13,5],[12,5],[11,5],[10,5],[9,5],[8,5]];
+function colorFill(name){
+  switch(name){
+    case 'red': return 'linearGradient'; // not used directly
+    default: return COLORS[name] || '#ccc';
   }
 }
 
-/* ---------- Token rendering & positions ---------- */
+// mapping home lanes (approx positions) — works for this 15x15 grid
+function homeLaneCoordsForPlayer(pi){
+  if(pi===0) return [[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]];
+  if(pi===1) return [[1,9],[2,9],[3,9],[4,9],[5,9],[6,9]];
+  if(pi===2) return [[9,13],[9,12],[9,11],[9,10],[9,9],[9,8]];
+  return [[13,5],[12,5],[11,5],[10,5],[9,5],[8,5]];
+}
+
+/* ---------- Token rendering ---------- */
 function clearTokensLayer(){ tokensLayer.innerHTML = ''; }
 function renderTokens(){
   clearTokensLayer();
-  // iterate players (activePlayers)
-  const active = state.activePlayers;
-  const gridRect = canvas.getBoundingClientRect();
-  active.forEach((playerIdx, pIdx)=>{
+  // show tokens for active players only
+  for(let p=0;p<game.playerCount;p++){
     for(let t=0;t<4;t++){
-      const pos = state.tokens[playerIdx][t];
+      const pos = game.tokens[p][t];
       const el = document.createElement('div');
-      el.className = 'token';
       el.style.position = 'absolute';
-      el.style.width = (CELL*0.75) + 'px';
-      el.style.height = (CELL*0.75) + 'px';
-      el.style.borderRadius = '50%';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.color = '#fff';
-      el.style.fontWeight = '700';
-      el.style.boxShadow = '0 6px 18px rgba(0,0,0,0.28)';
-      el.style.cursor = 'pointer';
-      el.dataset.player = playerIdx; el.dataset.token = t;
+      const size = Math.round(CELL*0.75) + 'px';
+      el.style.width = size; el.style.height = size;
+      el.style.borderRadius = '50%'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center';
+      el.style.color = '#fff'; el.style.fontWeight = '700';
+      el.style.pointerEvents = 'auto'; // allow clicking
+      const col = COLORS[playersOrder[p]] || '#bbb';
+      el.style.background = `linear-gradient(180deg, ${col}, ${shadeColor(col,-18)})`;
       el.innerText = (t+1);
-      // style by color
-      const col = COLORS[playersOrder[playerIdx]] || '#999';
-      el.style.background = `linear-gradient(180deg, ${col}, ${shadeColor(col,-12)})`;
-      // pointer events to allow player clicking
-      el.style.pointerEvents = 'auto';
 
-      // compute pixel position
+      // compute position px/py relative to canvas
       let px=0, py=0;
       if(pos === -1){
-        // base: four spots inside home block (use home block coordinates)
-        const baseCell = homeBaseCellForPlayer(playerIdx);
+        // base region inside 6x6 home block: choose four spots
+        const baseCell = homeBaseCellForPlayer(p);
         const {x,y} = gridToPixel(baseCell[0], baseCell[1]);
-        // offsets for 4 tokens
         const offsets = [[6,6],[CELL*0.9,6],[6,CELL*0.9],[CELL*0.9,CELL*0.9]];
         const off = offsets[t];
         px = x + off[0]; py = y + off[1];
-      } else if(isHomeIndex(pos)){
-        // place within home lane cell at step position
-        const playerIdxFromPos = Math.floor((pos-100)/6);
-        const step = (pos - 100) % 6;
-        const lane = homeLaneCoordsForPlayer(playerIdxFromPos);
-        const cell = lane[step];
-        const {x,y} = gridToPixel(cell[0], cell[1]);
+      } else if(pos >= 100){
+        // home column
+        const owner = Math.floor((pos-100)/6);
+        const step = (pos-100) % 6;
+        const cell = homeLaneCoordsForPlayer(owner)[step];
+        const {x,y} = gridToPixel(cell[0],cell[1]);
         px = x + CELL*0.12; py = y + CELL*0.12;
       } else {
-        // on path
-        const coord = PATH[pos % PATH.length];
+        // path
+        const coord = PATH[pos % PATHLEN];
         const {x,y} = gridToPixel(coord[0], coord[1]);
-        // cluster multiple tokens on same cell slightly
-        const sameCountAndIndex = countTokensOnPosition(pos, playerIdx, t);
-        const spacing = 8;
-        px = x + 6 + ( (sameCountAndIndex.index % 2) * spacing );
-        py = y + 6 + ( Math.floor(sameCountAndIndex.index/2) * spacing );
+        // cluster multiple tokens on same cell
+        const cluster = clusterIndexForPos(pos, p, t);
+        px = x + 6 + (cluster.index % 2)*12;
+        py = y + 6 + Math.floor(cluster.index/2)*12;
       }
 
-      // assign style left/top relative to canvas
       el.style.left = px + 'px';
       el.style.top = py + 'px';
-      // click handler (player selection)
-      el.addEventListener('click', onTokenClick);
+
+      // token click for human move selection
+      el.addEventListener('click', ()=> onTokenClicked(p,t));
+
       tokensLayer.appendChild(el);
     }
-  });
-  updatePlayersUI();
+  }
 }
 
 function homeBaseCellForPlayer(playerIdx){
-  // pick a cell inside 6x6 home block used for base positions
-  if(playerIdx===0) return [1,1]; // top-left zone inside block
-  if(playerIdx===1) return [1,11]; // top-right
-  if(playerIdx===2) return [11,11]; // bottom-right
-  return [11,1]; // bottom-left
+  if(playerIdx===0) return [1,1];
+  if(playerIdx===1) return [1,11];
+  if(playerIdx===2) return [11,11];
+  return [11,1];
 }
-
-// count tokens on same path index (for clustering)
-function countTokensOnPosition(pos, ownerPlayerIdx, tokenIndex){
-  let index = 0;
-  let total = 0;
-  // iterate all active tokens and find those with same pos
-  for(let p=0;p<4;p++){
+function clusterIndexForPos(pos, ownerIdx, tokenIdx){
+  let list = [];
+  for(let p=0;p<game.playerCount;p++){
     for(let t=0;t<4;t++){
-      if(state.tokens[p][t] === pos){
-        if(p===ownerPlayerIdx && t===tokenIndex) index = total;
-        total++;
-      }
+      if(game.tokens[p][t] === pos) list.push({p,t});
     }
   }
-  return { total, index };
+  let index = 0;
+  for(let i=0;i<list.length;i++){ if(list[i].p===ownerIdx && list[i].t===tokenIdx){ index = i; break; } }
+  return {total: list.length, index};
 }
 function shadeColor(hex, percent) {
-  // hex -> shade darker/lighter
   hex = hex.replace('#','');
   const num = parseInt(hex,16);
   const r = Math.min(255, Math.max(0, (num >> 16) + percent));
@@ -468,90 +371,86 @@ function shadeColor(hex, percent) {
   return '#' + ( (1<<24) + (r<<16) + (g<<8) + b ).toString(16).slice(1);
 }
 
-/* ---------- Game logic: moves, captures, turns ---------- */
-function possibleMovesForPlayer(playerIdx, roll){
+/* ---------- Game rules & movement ---------- */
+function possibleMoves(playerIdx, roll){
   const moves = [];
   for(let t=0;t<4;t++){
-    const pos = state.tokens[playerIdx][t];
+    const pos = game.tokens[playerIdx][t];
     if(pos === -1){
       if(roll === 6) moves.push(t);
     } else if(isHomeIndex(pos)){
-      const playerHomeBase = 100 + playerIdx*6;
-      const step = pos - playerHomeBase;
+      const homeBase = 100 + playerIdx*6;
+      const step = pos - homeBase;
       if(step < 5) moves.push(t);
     } else {
-      // normal path move; allow movement always (blocked logic optional)
+      // normal path cell — always allowed (no blocking for simplicity)
       moves.push(t);
     }
   }
   return moves;
 }
-
+function isHomeIndex(v){ return v >= 100; }
+function toHomeIndex(playerIdx, step){ return 100 + playerIdx*6 + step; }
 function stepsToHomeEntry(playerIdx, pos){
-  // distance (number of path steps) from pos to player's home entry square (the square right before home lane)
-  const entryIndex = homeEntryIndexForPlayer(playerIdx);
-  const pathLen = PATH.length;
-  let dist = (entryIndex - pos + pathLen) % pathLen;
-  if(dist === 0) dist = pathLen;
+  const entry = (playerStartIndex[playersOrder[playerIdx]] + PATHLEN - 1) % PATHLEN;
+  let dist = (entry - pos + PATHLEN) % PATHLEN;
+  if(dist === 0) dist = PATHLEN;
   return dist;
 }
 
 function doMove(playerIdx, tokenIdx, roll){
   clearSelection();
-  const pos = state.tokens[playerIdx][tokenIdx];
+  const pos = game.tokens[playerIdx][tokenIdx];
   if(pos === -1 && roll === 6){
-    // enter onto start square
+    // enter
     const start = playerStartIndex[playersOrder[playerIdx]];
-    state.tokens[playerIdx][tokenIdx] = start;
-    playCaptureSoundIfEnabled(true); // small sound (optional)
-    setMessage(`${playersOrder[playerIdx]} moved token ${tokenIdx+1} out of base.`);
+    game.tokens[playerIdx][tokenIdx] = start;
+    setMessage(`${playersOrder[playerIdx]}: token ${tokenIdx+1} entered board.`);
     resolveCaptures(playerIdx, start);
-    renderTokens(); afterMove(playerIdx, roll); return;
+    finishMove(playerIdx, roll); renderTokens();
+    return;
   }
   if(isHomeIndex(pos)){
     const homeBase = 100 + playerIdx*6;
     const step = pos - homeBase;
-    const newStep = step + 1;
-    if(newStep <= 5){
-      state.tokens[playerIdx][tokenIdx] = homeBase + newStep;
-      if(newStep === 5){ state.finished[playerIdx]++; if(state.finished[playerIdx] >= 4){ onWin(playerIdx); } }
-      setMessage(`${playersOrder[playerIdx]} moved token ${tokenIdx+1} inside home.`);
+    const ns = step + 1;
+    if(ns <= 5){
+      game.tokens[playerIdx][tokenIdx] = homeBase + ns;
+      if(ns === 5){ game.finished[playerIdx]++; if(game.finished[playerIdx] >= 4){ triggerWin(playerIdx); } }
+      setMessage(`${playersOrder[playerIdx]} moved inside home.`);
     } else {
       setMessage('Cannot move inside home.');
     }
-    renderTokens(); afterMove(playerIdx, roll); return;
+    finishMove(playerIdx, roll); renderTokens();
+    return;
   }
-  // normal path move
-  const pathLen = PATH.length;
+  // path move
   const startIdx = playerStartIndex[playersOrder[playerIdx]];
-  const stepsToStart = (startIdx - pos + pathLen) % pathLen;
+  const stepsToStart = (startIdx - pos + PATHLEN) % PATHLEN;
   if(roll > stepsToStart){
-    // enters home column
-    const overflow = roll - stepsToStart - 1; // 0-based
-    const homeBase = 100 + playerIdx*6;
+    const overflow = roll - stepsToStart - 1;
     const homeStep = Math.min(overflow,5);
-    state.tokens[playerIdx][tokenIdx] = homeBase + homeStep;
-    if(homeStep === 5){ state.finished[playerIdx]++; if(state.finished[playerIdx] >= 4){ onWin(playerIdx); } }
-    setMessage(`${playersOrder[playerIdx]} token ${tokenIdx+1} enters home column!`);
-    renderTokens(); afterMove(playerIdx, roll); return;
+    game.tokens[playerIdx][tokenIdx] = toHomeIndex(playerIdx, homeStep);
+    if(homeStep === 5){ game.finished[playerIdx]++; if(game.finished[playerIdx] >= 4) triggerWin(playerIdx); }
+    setMessage(`${playersOrder[playerIdx]} moved into home column.`);
+    finishMove(playerIdx, roll); renderTokens(); return;
   } else {
-    const newPos = (pos + roll) % pathLen;
-    state.tokens[playerIdx][tokenIdx] = newPos;
-    setMessage(`${playersOrder[playerIdx]} token ${tokenIdx+1} moved ${roll} steps to ${newPos}.`);
+    const newPos = (pos + roll) % PATHLEN;
+    game.tokens[playerIdx][tokenIdx] = newPos;
+    setMessage(`${playersOrder[playerIdx]} moved ${roll} steps to ${newPos}.`);
     resolveCaptures(playerIdx, newPos);
-    renderTokens(); afterMove(playerIdx, roll); return;
+    finishMove(playerIdx, roll); renderTokens(); return;
   }
 }
 
 function resolveCaptures(playerIdx, newPos){
   if(isHomeIndex(newPos)) return;
   if(safeIndices.has(newPos)) return;
-  // find opponents on same newPos and send them to base
-  for(let p=0;p<4;p++){
-    if(p === playerIdx) continue;
+  for(let p=0;p<game.playerCount;p++){
+    if(p===playerIdx) continue;
     for(let t=0;t<4;t++){
-      if(state.tokens[p][t] === newPos){
-        state.tokens[p][t] = -1;
+      if(game.tokens[p][t] === newPos){
+        game.tokens[p][t] = -1;
         setMessage(`${playersOrder[playerIdx]} captured ${playersOrder[p]}'s token!`);
         if(soundToggle.checked) playCaptureSound();
       }
@@ -559,340 +458,354 @@ function resolveCaptures(playerIdx, newPos){
   }
 }
 
-function afterMove(playerIdx, roll){
-  // set last roll, save, handle extra roll on 6
-  state.lastRoll = roll;
-  lastRollEl.innerText = roll;
-  saveStateIfNeeded();
+function finishMove(playerIdx, roll){
+  game.lastRoll = roll;
+  lastRollSpan.innerText = roll;
+  saveGame();
   if(roll === 6){
-    setMessage(`${playersOrder[playerIdx]} rolled a 6 — go again!`);
-    // same player's turn — if it's a bot, schedule another bot action
-    scheduleBotIfNeeded();
+    setMessage(`${playersOrder[playerIdx]} rolled a 6 — extra turn!`);
+    scheduleBotIfNeeded(); // if bot, it will play again
   } else {
-    // next player
-    state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.activePlayers.length;
-    setTimeout(()=>{ setMessage(`${playersOrder[state.activePlayers[state.currentPlayerIndex]]}'s turn.`); scheduleBotIfNeeded(); }, 250);
+    game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.activePlayers.length;
+    setTimeout(()=> { setMessage(`${playersOrder[game.activePlayers[game.currentPlayerIndex]]}'s turn.`); scheduleBotIfNeeded(); }, 300);
   }
 }
 
-// check winning
-function onWin(playerIdx){
-  winnerText.innerText = `${playersOrder[playerIdx].toUpperCase()} Wins! ❤️`;
-  winnerOverlay.style.display = 'flex';
-  if(soundToggle.checked) playWinSound();
+/* ---------- Bot AI ---------- */
+function isBotTurnNow(){
+  const pid = game.activePlayers[game.currentPlayerIndex];
+  return game.playerTypes && game.playerTypes[pid] === 'bot';
 }
 
-// selection & user click
-let awaitingSelectionFor = null; // {playerIdx, validMoves: [t,...], roll}
-function highlightMovable(playerIdx, moves){
-  awaitingSelectionFor = { playerIdx, moves, roll: state.lastRoll };
-  setMessage(`${playersOrder[playerIdx]}: choose a token (or bot will pick).`);
-  // visually highlight by adding a glow style to token DOM nodes (tokens are DOM elems in tokensLayer)
-  // tokens are automatically clickable and trigger onTokenClick.
-}
-function clearSelection(){
-  awaitingSelectionFor = null;
-  // remove any visual highlights if added (we didn't add persistent ones).
-}
-function onTokenClick(e){
-  const el = e.currentTarget;
-  const p = parseInt(el.dataset.player), t = parseInt(el.dataset.token);
-  if(!awaitingSelectionFor) return;
-  if(p !== awaitingSelectionFor.playerIdx) return;
-  if(!awaitingSelectionFor.moves.includes(t)) {
-    setMessage('That token cannot move for this roll.');
-    return;
-  }
-  doMove(p,t, awaitingSelectionFor.roll);
+function botPlayAfterDelay(){
+  const pid = game.activePlayers[game.currentPlayerIndex];
+  const difficulty = game.botDifficulty[pid] || 'medium';
+  // roll dice
+  setTimeout(()=> rollDice(true), 600 + Math.random()*800);
 }
 
-// capture sound helper small
-function playCaptureSoundIfEnabled(small=false){
-  if(!soundToggle.checked) return;
-  if(small) playToneOnce(300, 0.06);
-  else playCaptureSound();
-}
-function playToneOnce(freq,dur){ ensureAudio(); playTone(freq,dur); }
-
-// Dice roll UI flow
-let diceAnimating = false;
-function rollDiceAction(){
-  if(diceAnimating) return;
-  const currentPlayer = state.activePlayers[state.currentPlayerIndex];
-  // if it's a bot and bots exist and it's human click, still allow - but bots will handle automatically
-  diceAnimating = true;
-  // simple animation: show random numbers quickly
-  let steps = 12, t=0;
+// roll dice and handle result
+let diceBusy = false;
+function rollDice(triggeredByBot=false){
+  if(diceBusy) return;
+  diceBusy = true;
+  // animate numbers
+  let steps = 10, t=0;
   const iv = setInterval(()=>{
-    const tmp = 1 + Math.floor(Math.random()*6);
-    lastRollEl.innerText = tmp;
+    const v = 1 + Math.floor(Math.random()*6);
+    lastRollSpan.innerText = v;
     t++;
     if(t>=steps){
       clearInterval(iv);
       const result = 1 + Math.floor(Math.random()*6);
-      lastRollEl.innerText = result;
-      state.lastRoll = result;
+      lastRollSpan.innerText = result;
+      diceBusy = false;
       if(soundToggle.checked) playDiceSound();
-      diceAnimating = false;
-      // handle roll for current player
-      const moves = possibleMovesForPlayer(currentPlayer, result);
+      const currentPid = game.activePlayers[game.currentPlayerIndex];
+      const moves = possibleMoves(currentPid, result);
       if(moves.length === 0){
-        setMessage(`${playersOrder[currentPlayer]} : No moves. Turn passes.`);
+        setMessage(`${playersOrder[currentPid]}: No moves.`);
         if(result !== 6){
-          state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.activePlayers.length;
-          scheduleBotIfNeeded();
-        } else {
-          setMessage(`${playersOrder[currentPlayer]} rolled a 6 but no moves.`);
-          scheduleBotIfNeeded();
-        }
-        saveStateIfNeeded();
-      } else if(moves.length === 1 && isBotTurn()){
-        // if bot and single move, auto move
-        setTimeout(()=>{ doMove(currentPlayer, moves[0], result); }, 400);
-      } else if(isBotTurn()){
-        // bot to choose according to difficulty
-        setTimeout(()=>{ botChooseAndPlay(currentPlayer, result); }, 350 + Math.random()*600);
-      } else {
-        // human: highlight moves for selection
-        highlightMovable(currentPlayer, moves);
+          game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.activePlayers.length;
+        } // else keep same player
+        game.lastRoll = result; saveGame();
+        setTimeout(()=> scheduleBotIfNeeded(), 300);
+        return;
       }
-      saveStateIfNeeded();
+      // If bot's turn, bot chooses
+      if(isBotTurnNow()){
+        // bot chooses based on difficulty
+        setTimeout(()=> { botChooseAndMove(currentPid, result); }, 300 + Math.random()*400);
+      } else {
+        // human: highlight available moves and wait for click
+        highlightMovesForHuman(currentPid, moves, result);
+      }
     }
   }, 60);
 }
 
-/* ---------- Bot logic (easy & medium) ---------- */
-function isBotTurn(){
-  const bots = state.bots;
-  if(bots <= 0) return false;
-  // determine if current player is one of the last N players assigned as bots (we'll assign bots to last N players in active players order)
-  const idx = state.activePlayers[state.currentPlayerIndex];
-  // Map first players to humans, last 'bots' players to AI
-  // Simpler: if idx < (state.playerCount - bots) => human else bot
-  const humanCount = state.playerCount - state.bots;
-  const isBot = (state.activePlayers.indexOf(idx) >= humanCount);
-  return isBot;
-}
-
-function botChooseAndPlay(playerIdx, roll){
-  const difficulty = state.botDifficulty || 'medium';
-  const moves = possibleMovesForPlayer(playerIdx, roll);
+function botChooseAndMove(playerIdx, roll){
+  const moves = possibleMoves(playerIdx, roll);
   if(moves.length === 0){
     // pass
-    if(roll !== 6){
-      state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.activePlayers.length;
-    }
-    saveStateIfNeeded();
-    scheduleBotIfNeeded();
+    if(roll !== 6) game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.activePlayers.length;
+    game.lastRoll = roll; saveGame(); scheduleBotIfNeeded();
     return;
   }
+  const difficulty = game.botDifficulty[playerIdx] || 'medium';
   let choice = moves[Math.floor(Math.random()*moves.length)];
-  if(difficulty === 'easy'){
-    // random (already default)
-  } else {
-    // medium heuristic:
-    // 1) capture moves
-    // 2) move into home if possible
-    // 3) advance token closest to finish (max progress)
-    // otherwise random
-    // compute capture candidates
-    const captureMoves = [];
-    const enterHomeMoves = [];
-    let bestAdvance = null; let bestAdvanceScore = -Infinity;
+  if(difficulty === 'medium'){
+    // heuristic: capture -> enter home -> advance best
+    const captures = [];
+    const enters = [];
+    let bestAdvance = null; let bestScore = -Infinity;
     for(const t of moves){
-      const pos = state.tokens[playerIdx][t];
+      const pos = game.tokens[playerIdx][t];
       if(pos === -1 && roll === 6){
-        // entering onto start -> consider if immediately captures
         const dest = playerStartIndex[playersOrder[playerIdx]];
-        if(willCaptureAt(playerIdx, dest)) captureMoves.push(t);
-        else enterHomeMoves.push(t);
+        if(willCaptureAt(playerIdx, dest)) captures.push(t);
+        else enters.push(t);
       } else if(isHomeIndex(pos)){
-        // ignore
+        enters.push(t);
       } else {
-        const pathLen = PATH.length;
+        const pathLen = PATHLEN;
         const startIdx = playerStartIndex[playersOrder[playerIdx]];
         const stepsToStart = (startIdx - pos + pathLen) % pathLen;
-        if(roll > stepsToStart){
-          enterHomeMoves.push(t);
-        } else {
-          const dest = (pos + roll) % pathLen;
-          if(willCaptureAt(playerIdx, dest)) captureMoves.push(t);
-          // score by proximity to completing loop (larger total progress preferred)
-          const progress = (pos - startIdx + pathLen) % pathLen;
-          const score = progress + roll;
-          if(score > bestAdvanceScore){ bestAdvanceScore = score; bestAdvance = t; }
-        }
+        if(roll > stepsToStart) enters.push(t);
+        const dest = (pos + roll) % pathLen;
+        if(willCaptureAt(playerIdx, dest)) captures.push(t);
+        const progress = ((pos - startIdx + pathLen) % pathLen) + roll;
+        if(progress > bestScore){ bestScore = progress; bestAdvance = t; }
       }
     }
-    if(captureMoves.length) choice = captureMoves[0];
-    else if(enterHomeMoves.length) choice = enterHomeMoves[0];
+    if(captures.length) choice = captures[0];
+    else if(enters.length) choice = enters[0];
     else if(bestAdvance !== null) choice = bestAdvance;
     else choice = moves[Math.floor(Math.random()*moves.length)];
   }
-  // perform move after small delay to mimic thinking
-  setTimeout(()=>{ doMove(playerIdx, choice, roll); }, 300 + Math.random()*500);
+  // perform move
+  setTimeout(()=> doMove(playerIdx, choice, roll), 300 + Math.random()*300);
 }
+
 function willCaptureAt(playerIdx, dest){
   if(isHomeIndex(dest)) return false;
   if(safeIndices.has(dest)) return false;
-  for(let p=0;p<4;p++){
-    if(p===playerIdx) continue;
-    for(let t=0;t<4;t++) if(state.tokens[p][t] === dest) return true;
+  for(let p=0;p<game.playerCount;p++){
+    for(let t=0;t<4;t++) if(game.tokens[p][t] === dest) return true;
   }
   return false;
 }
 
-/* schedule bot on next turn if needed */
+/* ---------- Human interaction ---------- */
+let awaiting = null; // {playerIdx, moves, roll}
+function highlightMovesForHuman(playerIdx, moves, roll){
+  awaiting = {playerIdx, moves, roll};
+  setMessage(`${playersOrder[playerIdx]}: choose a token to move.`);
+  // tokens are clickable - onTokenClicked will validate
+}
+function clearSelection(){ awaiting = null; }
+
+function onTokenClicked(p,t){
+  if(!awaiting) return;
+  if(p !== awaiting.playerIdx) return;
+  if(!awaiting.moves.includes(t)) { setMessage('That token cannot move for this roll.'); return; }
+  doMove(p, t, awaiting.roll);
+}
+
+/* ---------- Turn scheduling ---------- */
 function scheduleBotIfNeeded(){
-  // if it's bot's turn, trigger automatic roll after delay
-  const currentPlayer = state.activePlayers[state.currentPlayerIndex];
-  const humanCount = state.playerCount - state.bots;
-  const indexInActive = state.activePlayers.indexOf(currentPlayer);
-  const isBot = (indexInActive >= humanCount);
-  if(isBot){
-    // bot will roll automatically after small delay
-    setTimeout(()=>{ rollDiceAction(); }, 600 + Math.random()*800);
+  // check current player
+  const pid = game.activePlayers[game.currentPlayerIndex];
+  if(game.playerTypes && game.playerTypes[pid] === 'bot'){
+    // bot will roll automatically after delay
+    setTimeout(()=> rollDice(true), 600 + Math.random()*400);
   }
 }
 
-/* ---------- UI & events ---------- */
-function updatePlayersUI(){
-  playersUI.innerHTML = '';
-  for(let i=0;i<state.playerCount;i++){
-    const card = document.createElement('div'); card.className='p-card';
-    const dot = document.createElement('div'); dot.className = 'dot ' + playersOrder[i];
-    const label = document.createElement('div'); label.innerHTML = `<strong>${playersOrder[i].toUpperCase()}</strong><div style="font-size:12px;color:#061022;opacity:.75">Finished: ${state.finished[i]}</div>`;
-    card.appendChild(dot); card.appendChild(label);
-    playersUI.appendChild(card);
-  }
+/* ---------- Win ---------- */
+function triggerWin(playerIdx){
+  winnerText.innerText = `${playersOrder[playerIdx].toUpperCase()} wins! ❤️`;
+  winnerOverlay.style.display = 'flex';
+  if(soundToggle.checked) playWinSound();
 }
 
-function updateUIFromState(){
-  // bot controls, difficulty, player count
-  botCountInput.value = state.bots;
-  botDifficultySelect.value = state.botDifficulty || 'medium';
-  lastRollEl.innerText = state.lastRoll || '-';
-  setMessage(state.message || 'Ready');
+/* ---------- UI helpers ---------- */
+function setMessage(txt){ game.message = txt; messageEl.innerText = txt; saveGame(); }
+
+function render(){
+  drawBoard();
   renderTokens();
 }
 
-function setMessage(txt){
-  state.message = txt;
-  messageEl.innerText = txt;
-  saveStateIfNeeded();
-}
-
-// event handlers
-rollBtn.addEventListener('click', ()=> {
-  if(isBotTurn()){
-    // allow manual roll even if bot; but preferred is automatic
+/* ---------- Setup UI (pre-game) ---------- */
+function buildSetupControls(){
+  playersSetupDiv.innerHTML = '';
+  const pc = parseInt(playerCountSelect.value,10);
+  for(let i=0;i<pc;i++){
+    const row = document.createElement('div'); row.className = 'player-setup';
+    const left = document.createElement('div'); left.innerHTML = `<strong>${playersOrder[i].toUpperCase()}</strong>`;
+    const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
+    // Human/Bot select
+    const sel = document.createElement('select'); sel.dataset.player = i;
+    const optH = document.createElement('option'); optH.value='human'; optH.innerText='Human';
+    const optB = document.createElement('option'); optB.value='bot'; optB.innerText='Bot';
+    sel.appendChild(optH); sel.appendChild(optB);
+    // difficulty select
+    const diff = document.createElement('select'); diff.dataset.player = i;
+    const e1 = document.createElement('option'); e1.value='easy'; e1.innerText='Easy';
+    const e2 = document.createElement('option'); e2.value='medium'; e2.innerText='Medium';
+    diff.appendChild(e1); diff.appendChild(e2);
+    // default: make first player human, others bots
+    if(i===0){ sel.value='human'; diff.value='medium'; } else { sel.value='bot'; diff.value='medium'; }
+    right.appendChild(sel); right.appendChild(diff);
+    row.appendChild(left); row.appendChild(right);
+    playersSetupDiv.appendChild(row);
   }
-  rollDiceAction();
+}
+applySetupBtn.addEventListener('click', ()=> {
+  buildSetupControls();
 });
-resetBtn.addEventListener('click', ()=> {
-  if(!confirm('Reset game?')) return;
-  state = freshState();
-  saveStateIfNeeded();
-  renderTokens();
-  setMessage('New game. Click Roll.');
+playerCountSelect.addEventListener('change', buildSetupControls);
+
+startBtn.addEventListener('click', ()=> {
+  // read setup
+  const pc = parseInt(playerCountSelect.value,10);
+  const types = Array(4).fill('human');
+  const diffs = Array(4).fill('medium');
+  const items = playersSetupDiv.querySelectorAll('select');
+  // items appear in pairs (type,diff)
+  const pairs = [];
+  for(let i=0;i<items.length;i+=2){
+    pairs.push([items[i].value, items[i+1].value]);
+  }
+  for(let i=0;i<pc;i++){
+    types[i] = pairs[i][0];
+    diffs[i] = pairs[i][1];
+  }
+  // fill rest players as not active
+  for(let i=pc;i<4;i++){ types[i] = 'human'; diffs[i]='medium'; }
+  game = freshGame(pc, types, diffs);
+  // initialize tokens (all -1)
+  saveGame(); render(); setMessage('Game started.'); scheduleBotIfNeeded();
 });
-saveBtn.addEventListener('click', ()=> {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  setMessage('Game saved.');
+
+resumeBtn.addEventListener('click', ()=> {
+  loadSavedIntoGame();
+  render(); setMessage('Resumed saved game.'); scheduleBotIfNeeded();
 });
+
+/* ---------- Save/Load/Export/Import ---------- */
+function loadSavedIntoGame(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) { alert('No saved game in browser storage.'); return; }
+  try{
+    const obj = JSON.parse(raw);
+    // basic validation
+    if(obj && obj.tokens){
+      game = obj;
+      setMessage('Loaded saved game.');
+      render();
+    } else alert('Saved data invalid.');
+  }catch(e){ alert('Failed to load save.'); }
+}
 clearSaveBtn.addEventListener('click', ()=> {
-  if(!confirm('Clear saved game?')) return;
-  clearSave();
+  if(!confirm('Clear saved game from this browser?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  game = freshGame();
+  render(); setMessage('Saved data cleared and new game started.');
 });
-botCountInput.addEventListener('change', ()=> {
-  const v = Math.max(0, Math.min(3, parseInt(botCountInput.value) || 0));
-  state.bots = v;
-  // ensure bots do not exceed players-1
-  if(state.bots >= state.playerCount) state.bots = state.playerCount - 1;
-  botCountInput.value = state.bots;
-  saveStateIfNeeded();
-  renderTokens();
-});
-botDifficultySelect.addEventListener('change', ()=> { state.botDifficulty = botDifficultySelect.value; saveStateIfNeeded(); });
-soundToggle.addEventListener('change', ()=> { if(soundToggle.checked) { ensureAudio(); } });
-autoSaveToggle.addEventListener('change', ()=> { saveStateIfNeeded(); });
-playAgainBtn.addEventListener('click', ()=> { winnerOverlay.style.display='none'; state = freshState(); saveStateIfNeeded(); renderTokens(); setMessage('New game. Click Roll.'); });
-
-// export/import save
 exportBtn.addEventListener('click', ()=> {
-  const data = JSON.stringify(state, null, 2);
+  const data = JSON.stringify(game, null, 2);
   const blob = new Blob([data], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'ludo-save.json'; a.click(); URL.revokeObjectURL(url);
 });
 importBtn.addEventListener('click', ()=> {
-  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json';
   inp.onchange = (e)=> {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev)=> {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader(); r.onload = ev => {
       try{
         const obj = JSON.parse(ev.target.result);
-        if(obj && obj.tokens) { state = obj; saveStateIfNeeded(); updateUIFromState(); renderTokens(); setMessage('Save imported.'); }
+        if(obj && obj.tokens){ game = obj; saveGame(); render(); setMessage('Imported save.'); }
         else alert('Invalid save file.');
-      }catch(err){ alert('Invalid JSON file.'); }
-    }
-    reader.readAsText(file);
-  };
-  inp.click();
+      } catch(err){ alert('Invalid JSON file.'); }
+    }; r.readAsText(f);
+  }; inp.click();
 });
 
-/* ---------- Save helpers ---------- */
-function saveStateIfNeeded(){ if(autoSaveToggle.checked) localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function initFromStorage(){
-  const ok = loadState();
-  if(!ok){
-    state = freshState();
-    saveStateIfNeeded();
-  }
-  // apply UI values
-  botCountInput.value = state.bots;
-  botDifficultySelect.value = state.botDifficulty;
-  updateUIFromState();
-}
+/* ---------- Token click handler is attached when rendering tokens (elements created earlier) ---------- */
+function onTokenClickedExternal(p,t){ onTokenClicked(p,t); }
 
-/* ---------- Floating love emojis (decorative) ---------- */
-const LOVE = ["💖","❤️","💋","💐","😘","💕","😍","🌹","💞","💗"];
-function spawnLove(xPercent){
+/* ---------- Startup & render loop ---------- */
+function init(){
+  // build initial setup controls and either load saved game or fresh
+  buildSetupControls();
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{
+      const obj = JSON.parse(raw);
+      if(obj && obj.tokens){ game = obj; setMessage('Loaded saved game. Press Resume to continue or Start to begin new.'); }
+      else game = freshGame();
+    }catch(e){ game = freshGame(); }
+  } else game = freshGame();
+
+  render();
+  startLoveStream();
+  scheduleBotIfNeeded();
+}
+init();
+
+/* ---------- Roll / Reset / Play handlers ---------- */
+rollBtn.addEventListener('click', ()=> { // if it's human's turn, allow
+  const pid = game.activePlayers[game.currentPlayerIndex];
+  if(game.playerTypes && game.playerTypes[pid] === 'bot') {
+    // allow manual roll too, but bots auto-play
+  }
+  rollDice();
+});
+resetBtn.addEventListener('click', ()=> {
+  if(!confirm('Reset the current game?')) return;
+  game = freshGame(game.playerCount, game.playerTypes, game.botDifficulty);
+  saveGame(); render(); setMessage('Game reset.'); scheduleBotIfNeeded();
+});
+playAgainBtn.addEventListener('click', ()=> {
+  winnerOverlay.style.display = 'none';
+  game = freshGame(game.playerCount, game.playerTypes, game.botDifficulty);
+  saveGame(); render(); setMessage('New game ready.');
+});
+
+/* ---------- Floating hearts ---------- */
+let loveInterval = null;
+function spawnHeart(xPercent){
   const el = document.createElement('div');
   el.className = 'floating-love';
-  el.innerText = LOVE[Math.floor(Math.random()*LOVE.length)];
-  el.style.left = (xPercent || (Math.random()*80+10)) + 'vw';
-  const size = 14 + Math.random()*24; el.style.fontSize = size + 'px';
+  el.innerText = LOVE_EMOJIS[Math.floor(Math.random()*LOVE_EMOJIS.length)];
+  el.style.left = (xPercent || Math.random()*80 + 8) + 'vw';
   el.style.top = '110vh';
   document.body.appendChild(el);
-  const dur = 6 + Math.random()*5; el.style.transition = `transform ${dur}s linear, top ${dur}s linear, opacity ${dur}s linear`;
-  setTimeout(()=>{ el.style.transform = `translateY(-140vh) rotate(${Math.random()*360}deg)`; el.style.opacity = '0.9'; }, 30);
-  setTimeout(()=> el.remove(), (dur+0.3)*1000);
+  const dur = 6 + Math.random()*4;
+  el.style.transition = `transform ${dur}s linear, top ${dur}s linear, opacity ${dur}s linear`;
+  setTimeout(()=> { el.style.transform = `translateY(-150vh) rotate(${Math.random()*360}deg)`; el.style.opacity = '0.95'; }, 30);
+  setTimeout(()=> el.remove(), (dur+0.5)*1000);
 }
-let loveInterval = null;
-function startLoveStream(){ for(let i=0;i<6;i++){ setTimeout(()=>spawnLove(), i*120); } loveInterval = setInterval(()=>spawnLove(), 420); }
+function startLoveStream(){
+  for(let i=0;i<6;i++) setTimeout(()=> spawnHeart(), i*100);
+  loveInterval = setInterval(()=> spawnHeart(), 420);
+}
 function stopLoveStream(){ if(loveInterval) clearInterval(loveInterval); }
 
-/* ---------- Boot & render ---------- */
+/* ---------- Helpers ---------- */
+function setMessageShort(s){ messageEl.innerText = s; }
+function saveGame(){ if(autosaveToggle.checked) localStorage.setItem(STORAGE_KEY, JSON.stringify(game)); }
+function scheduleBotIfNeeded(){ // check current player
+  const pid = game.activePlayers[game.currentPlayerIndex];
+  if(game.playerTypes && game.playerTypes[pid] === 'bot'){
+    setTimeout(()=> rollDice(), 700 + Math.random()*500);
+  }
+}
+function triggerWinOverlay(pid){ winnerText.innerText = `${playersOrder[pid].toUpperCase()} wins! ❤️`; winnerOverlay.style.display = 'flex'; if(soundToggle.checked) playWinSound(); }
+
+/* ---------- Boot render (draw and tokens) ---------- */
 function render(){
   drawBoard();
   renderTokens();
+  lastRollSpan.innerText = game.lastRoll || '-';
+  messageEl.innerText = game.message || 'Ready';
+  // hide setup area if game running
 }
-initFromStorage();
-render();
-startLoveStream();
-updatePlayersUI();
-scheduleBotIfNeeded();
 
-/* if saved game exists, restore UI values and schedule bots */
-if(state.lastRoll) lastRollEl.innerText = state.lastRoll;
-setMessage(state.message || 'Ready');
+canvas.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); });
 
-// helper to ensure audio context resumed on user gesture (some browsers block autoplay)
-document.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+/* helper to trigger token click from DOM elements created earlier */
+tokensLayer.addEventListener('click', (ev)=> {
+  // tokens are child divs; each appended has listener already
+});
 
+/* make sure the autosave toggle initial state matches storage */
+document.addEventListener('DOMContentLoaded', ()=> {
+  // nothing
+});
 </script>
 </body>
 </html>
